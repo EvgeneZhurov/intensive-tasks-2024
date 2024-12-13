@@ -24,7 +24,50 @@ package com.walking.intensive.chapter5.task20;
  */
 public class Task20 {
     public static void main(String[] args) {
-//        Для собственных проверок можете делать любые изменения в этом методе
+        System.out.println(getDeterminant(new int[][]{
+                {3, 2, 4, 8, 7},
+                {1, 4, 3, 7, 9},
+                {6, 2, 1, 5, 5},
+                {0, 4, 2, 1, 3},
+                {6, 4, 2, 8, 9}
+        })); //answer: -120
+
+        System.out.println(getDeterminant(new int[][]{
+                {3, 2, 4},
+                {2, 2, 1},
+                {0, 2, 3}
+        })); //answer: 16
+
+        System.out.println(getDeterminant(new int[][]{
+                {3, 2},
+                {2, 2, 1},
+                {0, 2, 3}
+        })); //answer: null
+
+        System.out.println(getDeterminant(new int[][]{
+                {3, 2, 4},
+                {2, 2},
+                {0, 2, 3}
+        })); //answer: null
+
+        System.out.println(getDeterminant(new int[][]{
+                {3, 2, 4},
+                {2, 2, 1},
+                {0, 2}
+        })); //answer: null
+
+        System.out.println(getDeterminant(new int[][]{
+                {3, 2, 4, 5},
+                {2, 2, 1, 6},
+                {0, 2, 3, 4}
+        })); //answer: null
+
+        System.out.println(getDeterminant(new int[][]{
+                {3, 2, 4},
+                {2, 2, 1},
+                {0, 2, 3},
+                {0, 2, 3}
+        })); //answer: null
     }
 
     /**
@@ -40,8 +83,29 @@ public class Task20 {
      * До тех пор приходится находить обходные пути для обозначения ситуаций, когда что-то пошло не по плану.
      */
     static Integer getDeterminant(int[][] matrix) {
-        // Ваш код
-        return null;
+        if (!isValid(matrix)) {
+            return null;
+        }
+
+        if (matrix.length == 2) {
+            return getDeterminantSize2(matrix);
+        }
+
+        int determinant = 0;
+
+        for (int j = 0; j < matrix.length; j++) {
+            if (matrix[0][j] == 0) {
+                continue;
+            }
+
+            determinant += (int) (Math.pow(-1, 2 + j)) * matrix[0][j] * getDeterminant(getNewArray(matrix, j));
+        }
+
+        return determinant;
+    }
+
+    private static int getDeterminantSize2(int[][] matrix) {
+        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
     }
 
     /**
@@ -53,6 +117,39 @@ public class Task20 {
      * getDeterminant() должен использовать isValid().
      */
     static boolean isValid(int[][] matrix) {
-        return false;
+        if (matrix == null) {
+            return false;
+        }
+
+        for (int[] ints : matrix) {
+            if (ints.length != matrix.length) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static int[][] getNewArray(int[][] matrix, int y) {
+        int[][] buffer = new int[matrix.length - 1][matrix.length - 1];
+
+        int indexI = 0;
+        int indexJ = 0;
+
+        for (int i = 1; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (j == y) {
+                    continue;
+                }
+
+                buffer[indexI][indexJ++] = matrix[i][j];
+            }
+
+            indexI++;
+            indexJ = 0;
+        }
+
+        return buffer;
     }
 }
+
